@@ -13,5 +13,6 @@
 3. Isi konfigurasi database pada file `.env` sesuai dengan konfigurasi pada database yang digunakan
 
 ## Testing
-1. Pindah ke folder `tests`
+1. Jalankan server dengan perintah `go run main.go`
+2. Pindah ke folder `tests`
 2. jalankan perintah `go test . -v`
