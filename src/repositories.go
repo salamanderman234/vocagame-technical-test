@@ -43,10 +43,16 @@ func (p productRepo) Find(id int) (Product, error) {
 }
 func (p productRepo) Update(id int, data Product) (Product, error) {
 	result := p.conn.Where("id = ?", id).Updates(data)
+	if result.RowsAffected == 0 {
+		return data, ErrNotFound
+	}
 	return data, result.Error
 }
 func (p productRepo) Delete(id int) error {
 	result := p.conn.Where("id = ?", id).Delete(&Product{})
+	if result.RowsAffected == 0 {
+		return ErrNotFound
+	}
 	return result.Error
 }
 func (p productRepo) BatchSearch(ids []uint) ([]Product, error) {
@@ -197,7 +203,7 @@ func NewTransactionRepo(conn *gorm.DB) TransactionRepositoryInterface {
 }
 func (t transactionRepo) CreateTransaction(data Transaction) (Transaction, error) {
 	err := t.conn.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(data).Error; err != nil {
+		if err := tx.Create(&data).Error; err != nil {
 			return err
 		}
 		details := data.Details
@@ -231,7 +237,7 @@ func (t transactionRepo) CreateTransactionPayment(data TransactionPayment) error
 		}
 		amount := tr.FinalAmount
 		data.Amount = amount
-		if err := tx.Create(data).Error; err != nil {
+		if err := tx.Create(&data).Error; err != nil {
 			return err
 		}
 		tr.Status = "ok"
@@ -268,7 +274,7 @@ func (t transactionRepo) CreateTransactionPayment(data TransactionPayment) error
 			Amount:      -amount,
 			Description: "sending",
 		}
-		if err := tx.Create(h).Error; err != nil {
+		if err := tx.Create(&h).Error; err != nil {
 			return err
 		}
 		if data.WalletDestinationID != 0 {
@@ -300,7 +306,7 @@ func (t transactionRepo) CreateTransactionPayment(data TransactionPayment) error
 				Amount:      amount,
 				Description: "receiving",
 			}
-			if err := tx.Create(h).Error; err != nil {
+			if err := tx.Create(&h).Error; err != nil {
 				return err
 			}
 		}

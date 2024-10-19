@@ -3,6 +3,7 @@ package src
 import (
 	"context"
 	"slices"
+	"time"
 )
 
 // product service
@@ -157,7 +158,7 @@ func (t transactionService) CreateProductTransaction(ctx context.Context, data T
 		FinalAmount:         0,
 		WalletDestinationID: 0,
 		Status:              "wait",
-		Date:                data.Date,
+		Date:                time.Now(),
 		Type:                "product",
 		Note:                Sanitize(data.Note),
 		Details:             []TransactionDetail{},
@@ -191,12 +192,15 @@ func (t transactionService) CreateWalletTransaction(ctx context.Context, data Tr
 		return Transaction{}, err
 	}
 	user, _ := GetUserContext(ctx)
+	if data.WalletDestinationID == 0 {
+		return Transaction{}, ErrBadRequest
+	}
 	transaction := Transaction{
 		UserID:              user.ID,
 		FinalAmount:         data.FinalAmount,
 		WalletDestinationID: data.WalletDestinationID,
 		Status:              "wait",
-		Date:                data.Date,
+		Date:                time.Now(),
 		Type:                "wallet",
 		Note:                Sanitize(data.Note),
 	}

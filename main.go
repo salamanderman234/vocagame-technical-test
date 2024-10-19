@@ -31,6 +31,7 @@ func init() {
 	Migrate()
 	src.ENCRYPTION_KEY = viper.GetString("ENCRYPTION_KEY")
 	src.JWT_KEY = viper.GetString("JWT_KEY")
+	src.InitCipherBlock()
 }
 
 func main() {
@@ -40,7 +41,6 @@ func main() {
 	}
 
 	conn := src.ConnectDatabase()
-	src.InitCipherBlock()
 
 	// product
 	productRepo := src.NewProductRepo(conn)

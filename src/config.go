@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var (
@@ -27,8 +28,8 @@ func ConnectDatabase() *gorm.DB {
 		viper.GetString("DB_NAME"),
 	)
 	c, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		TranslateError: true,
-		// Logger:                                   logger.Default.LogMode(logger.Info),
+		TranslateError:                           true,
+		Logger:                                   logger.Default.LogMode(logger.Silent),
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {

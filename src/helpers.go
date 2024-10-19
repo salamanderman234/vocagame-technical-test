@@ -8,8 +8,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/golang-jwt/jwt/v5"
@@ -118,6 +120,7 @@ func ErrorHandler(w http.ResponseWriter, err error) {
 	errCon, ok := err.(Err)
 	errs, errsOk := errCon.Obj.(govalidator.Errors)
 	if !ok {
+		log.Println("ERROR : ", err.Error())
 		SendJSON(w, http.StatusInternalServerError, err.Error(), nil)
 	} else {
 		var details any
@@ -160,12 +163,16 @@ func DecryptData(cipherText string) (string, error) {
 
 // end of encrypt
 // jwt
+
 func CreateToken(user User) (string, error) {
 	idStr := strconv.Itoa(int(user.ID))
 	claims := JWTClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ID:      idStr,
 			Subject: "Auth token",
+			ExpiresAt: &jwt.NumericDate{
+				Time: time.Now().Add(3 * time.Hour),
+			},
 		},
 		Email: user.Email,
 		Role:  user.Role,
@@ -178,12 +185,13 @@ func CreateToken(user User) (string, error) {
 }
 func ParseToken(token string) (User, error) {
 	user := User{}
+	key := JWT_KEY
 	tkn, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		method := t.Method
 		if method != jwt.SigningMethodHS256 {
 			return nil, jwt.ErrTokenSignatureInvalid
 		}
-		return []byte(JWT_KEY), nil
+		return []byte(key), nil
 	})
 	if err != nil {
 		return user, err

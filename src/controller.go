@@ -140,7 +140,7 @@ func (wa walletController) Handle(w http.ResponseWriter, r *http.Request) {
 func (wa walletController) Create(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	data := struct {
-		PaymentMethod string `json:"amount" valid:"required"`
+		PaymentMethod string `json:"payment_method" valid:"required"`
 	}{}
 	err := decoder.Decode(&data)
 	if err != nil {
@@ -278,6 +278,7 @@ func (t transactionController) CreateTransaction(w http.ResponseWriter, r *http.
 		result, err = t.service.CreateWalletTransaction(GetRequestContext(r), data)
 	} else {
 		SendJSON(w, http.StatusBadRequest, "invalid transaction type", nil)
+		return
 	}
 
 	if err != nil {

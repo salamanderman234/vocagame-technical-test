@@ -16,7 +16,7 @@ func WalletDetailPolicy(user User, data any) bool {
 	if !ok {
 		return false
 	}
-	return user.ID == con.UserID
+	return user.ID == con.UserID && user.ID != 0
 }
 
 func CreateTransactionPolicy(user User, data any) bool {
@@ -28,5 +28,5 @@ func UpdateTransactionPolicy(user User, data any) bool {
 	if !ok {
 		return false
 	}
-	return user.ID == con.UserID
+	return user.ID == con.UserID && user.ID == 0
 }

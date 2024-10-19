@@ -33,4 +33,8 @@ var (
 		Message: "invalid qty",
 		Status:  http.StatusUnprocessableEntity,
 	}
+	ErrBadRequest = Err{
+		Message: "bad request",
+		Status:  http.StatusBadRequest,
+	}
 )

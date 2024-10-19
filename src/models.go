@@ -33,7 +33,7 @@ type Wallet struct {
 	UserID        uint   `json:"user_id"`
 	Balance       string `json:"balance"`
 	PaymentMethod string `json:"payment_method"`
-	Histories     string `json:"histories"`
+	Histories     string `json:"histories" gorm:"-"`
 }
 
 type WalletHistory struct {
@@ -50,12 +50,12 @@ type TransactionProductForm struct {
 }
 
 type TransactionForm struct {
-	FinalAmount         int64                    `json:"final_amount"`
-	WalletDestinationID uint                     `json:"wallet_destination_id"`
-	Date                time.Time                `json:"date"`
-	Note                string                   `json:"note"`
-	Type                string                   `json:"type"`
-	Products            []TransactionProductForm `json:"products"`
+	FinalAmount         int64 `json:"final_amount"`
+	WalletDestinationID uint  `json:"wallet_destination_id"`
+	// Date                time.Time                `json:"date"`
+	Note     string                   `json:"note"`
+	Type     string                   `json:"type" valid:"required"`
+	Products []TransactionProductForm `json:"products"`
 }
 
 type Transaction struct {
